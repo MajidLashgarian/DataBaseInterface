@@ -16,12 +16,12 @@ class MySqliDBConnection extends Debug{
 	 * user -> UserName of Mysql database which permit to access the database
 	 * pass -> Password for username of mysql databae 
 	 */
-	private $DBInfo = array(
-		"Name"=>"KidsCollege",
+	private $info = array(
+		"database"=>"",
 		"server"=>"localhost",
 		"port"=>"8889",
 		"user"=>"root",
-		"pass"=>"asdQWE123"
+		"pass"=>""
 	);
 
 
@@ -41,7 +41,7 @@ class MySqliDBConnection extends Debug{
 	 * <a href="http://www.php.net//manual/en/book.mysqli.php">MySqli library </a>
 	 */
 	public function openConnection(){
-		$this->con = mysqli_connect($this->DBInfo["server"] , $this->DBInfo["user"] , $this->DBInfo["pass"], $this->DBInfo["Name"] ); 
+		$this->con = mysqli_connect($this->info["server"] , $this->info["user"] , $this->info["pass"], $this->info["database"] ); 
 	    $this->errno = mysqli_connect_errno(); 	
 		if(mysqli_connect_errno()) 
 			return false; 
@@ -109,10 +109,15 @@ class MySqliDBConnection extends Debug{
 		$rows=array();
 		/**
 		* get number of rows in table and fetch each row as a object and assign it to rows array 
-		*/
+		 */
+		$tempRow = array(); 
 		for($i=0;$i<$result->num_rows; $i++ ){
 			$rows[$i] = $result->fetch_object();
+			$tempRow[] = array(); 
+			foreach($rows[$i] as $r)
+				$tempRow[$i][] = $r;
 		}
+		$rows = $tempRow ;
 		/**
 		* It's for this error : Commands out of sync; you can't run this command now
 		*  Every stored procedure returns at least two results
@@ -129,7 +134,11 @@ class MySqliDBConnection extends Debug{
 		} 
 		return $rows;
 	}
+	
 
+	public function getDBName(){
+		return $this->info["database"];
+	}
 }
 
 
